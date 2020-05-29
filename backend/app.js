@@ -9,6 +9,7 @@ const cookieParser = require('cookie-parser')
 require('dotenv').config()
 
 // import routes
+const authRoutes = require('./routes/auth')
 const userRoutes = require('./routes/user')
 
 // app
@@ -30,6 +31,7 @@ app.use(cookieParser());
 // app.use(check());
 
 // routes middleware 
+app.use('/api', authRoutes)
 app.use('/api', userRoutes)
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
