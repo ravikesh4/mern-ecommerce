@@ -11,7 +11,7 @@ exports.signup = (req, res) => {
     user.save((error, user) => {
         if(error) {
             return res.status(400).json({
-                error: errorHandler(error)
+                error: 'Something went wrong'
             })
         }
         user.salt = undefined;
@@ -28,15 +28,11 @@ exports.signin = (req, res) => {
     User.findOne({email}, (err, user) => {
         if(err || !user) {
             return res.status(400).json({
-                err: 'User not exist, Please signup'
+                error: 'User not exist, Please signup'
             })
         }
-        // if user found check email and password match
-
-        // create authenticate method in user model 
-
-        if(!user.authenticate(password)) {
-            return res.json(401).json({
+       if(!user.authenticate(password)) {
+            return res.status(401).json({
                 error: "Email and password doesn't match"
             });
         }
