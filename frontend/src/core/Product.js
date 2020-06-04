@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react'
 import Layout from './Layout'
-import {getProduct, read, listRelated} from './apiCore'
+import {read, listRelated} from './apiCore'
 import Card from './Card';
 
 const Product = (props) => {
