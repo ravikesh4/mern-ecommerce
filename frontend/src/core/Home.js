@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react'
 import Layout from './Layout'
 import {getProduct} from './apiCore'
 import Card from './Card';
+import Search from './Search';
 
 
 const Home = () => {
@@ -35,18 +36,24 @@ const Home = () => {
         loadProductBySell()
     }, [])
 
-    return (<Layout title="Home Page" description="Node React app" className="container">
+    return (
+        <Layout title="Home Page" description="Node React app" className="container">
+            <Search />
 
             <h2 className="mb-4">New Arrival</h2>        
             <div className="row">
             {productsByArrival.map((product, i) => (
-                <Card key={i} product={product} />
+                <div key={i} className="col-md-4 mb-3">
+                    <Card  product={product} />
+                </div>
                 ))}
                 </div>       
                 <h2 className="mb-4">Best Sellers</h2> 
             <div className="row">
             {productsBySell.map((product, i) => (
-                <Card key={i} product={product} />
+                <div key={i} className="col-md-4 mb-3">
+                <Card  product={product} />
+            </div>
             ))}
             </div>
 
