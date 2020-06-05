@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react'
-import {getBraintreeClientToken, processPayment} from './apiCore'
+import {getBraintreeClientToken, processPayment, createOrder} from './apiCore'
 import { isAuthenticated } from '../auth';
 import { Link } from 'react-router-dom';
 import DropIn from 'braintree-web-drop-in-react'
@@ -54,6 +54,8 @@ const Checkout = ({products}) => {
         )
     }
 
+    let deliveryAddress = data.address;
+
     const buy = () => {
         setData({ loading: true });
 
@@ -76,15 +78,30 @@ const Checkout = ({products}) => {
             processPayment(userId, token, paymentData)
             .then(response => {
                 // console.log(response)
-                setData({...data, success: response.success})
-                // empty cart 
-                emptyCart(() => {
-                    console.log('payment success and empty cart')  
-                    setData({ loading: false, success: true });
-
-                })
-                // create order 
                 
+                const createOrderData = {
+                    products: products,
+                    transaction_id: response.transaction.id,
+                    amount: response.transaction.amount,
+                    address: deliveryAddress
+                }
+                // create order
+                createOrder(userId, token, createOrderData).then(response => {
+                    // empty cart 
+                    emptyCart(() => {
+                        console.log('payment success and empty cart')  
+                        setData({ loading: false, success: true });
+    
+                    })
+                })
+                
+                // setData({...data, success: response.success})
+                // // empty cart 
+                // emptyCart(() => {
+                //     console.log('payment success and empty cart')  
+                //     setData({ loading: false, success: true });
+
+                // })
             })
             .catch(error => {
                 console.log(error)
@@ -100,10 +117,19 @@ const Checkout = ({products}) => {
         })
     }
 
+    const handleAddress = event => {
+        setData({...data, address: event.target.value});
+    }
+
     const showDropIn = () => (
         <div onBlur={() => setData({...data, error: ''})}>
             {data.clientToken !== null && products.length > 0 ? (
                 <div>
+                    <div className="form-group mb-3">
+                        <label className="text-muted">Delivery address:</label>
+                        <textarea onChange={handleAddress} className="form-control" value={data.address}
+                        placeholder="Type your delivery address here..." />
+                    </div>
                     <DropIn options={{
                         authorization: data.clientToken,
                         // paypal: {
@@ -140,6 +166,7 @@ const Checkout = ({products}) => {
         {showSuccess(data.success)}
         {showError(data.error)}
         {showCheckout()}
+
     </div>
 }
 
